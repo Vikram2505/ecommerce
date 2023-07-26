@@ -52,7 +52,7 @@ export const SignIn = async (req, res, next) => {
     }
     const isCorrectPassword = await bcrypt.compare(password, OldUser.password);
     if (!isCorrectPassword) {
-      throw new ErrorHandler(404, "Invalid password");
+      throw new ErrorHandler(201, "Invalid password");
     }
     const token = jwt.sign(
       {
@@ -79,7 +79,7 @@ export const SignIn = async (req, res, next) => {
     });
   } catch (err) {
     // next(new ErrorHandler(err.statusCode || 500, err.message));
-    res.status(500).json({
+    res.status(err.statusCode).json({
       status: "failed",
       message: err.message,
     });
