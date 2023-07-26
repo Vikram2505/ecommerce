@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
   title: { type: String, required: true, unique: true },
@@ -31,10 +31,11 @@ const virtual = productSchema.virtual("id");
 virtual.get(() => {
   return this._id;
 });
+
 productSchema.set("toJSON", {
   virtuals: true,
   versionKey: false,
   transform: (ret) => delete ret._id,
 });
 
-exports.Product = mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema);

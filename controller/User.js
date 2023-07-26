@@ -1,18 +1,18 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
-const User = require("../model/UserModel");
-const { ErrorHandler } = require("../_helpers/errorHandler.js");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import User from "../model/UserModel.js";
+import { ErrorHandler } from "../_helpers/errorHandler.js";
 
 const secret = "test";
 
 // @desc        create user
 // @route       /user/signup
-exports.SignUp = async (req, res) => {
+export const SignUp = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    let OldUser = await User.findOne({ email });
+    let OldUser = await User.find({ email });
     if (OldUser.length > 0) {
       res.status(400).json({
         status: "Users email already exists.",
@@ -41,22 +41,18 @@ exports.SignUp = async (req, res) => {
 
 // @desc        login user
 // @route       /user/signin
-exports.SignIn = async (req, res, next) => {
+export const SignIn = async (req, res, next) => {
+  console.log(req.body,'------');
+
   const { email, password } = req.body;
   try {
     const OldUser = await User.findOne({ email });
     if (!OldUser) {
       throw new ErrorHandler(404, "User dosen't exists");
-      // return res.status(404).json({
-      //   status: "User dosen't exists",
-      // });
     }
     const isCorrectPassword = await bcrypt.compare(password, OldUser.password);
     if (!isCorrectPassword) {
       throw new ErrorHandler(404, "Invalid password");
-      // return res.status(404).json({
-      //   status: "Invalid password",
-      // });
     }
     const token = jwt.sign(
       {
@@ -82,15 +78,15 @@ exports.SignIn = async (req, res, next) => {
       status: "success",
     });
   } catch (err) {
-    next(new ErrorHandler(err.statusCode || 500, err.message));
-    // res.status(500).json({
-    //   status: "failed",
-    //   message: err.message,
-    // });
+    // next(new ErrorHandler(err.statusCode || 500, err.message));
+    res.status(500).json({
+      status: "failed",
+      message: err.message,
+    });
   }
 };
 
-exports.AllUsers = async (req, res) => {
+export const AllUsers = async (req, res) => {
   try {
     const users = await User.find()
       .select("_id name userBlocked email createdAt role")
@@ -109,7 +105,7 @@ exports.AllUsers = async (req, res) => {
 
 // @desc        block user
 // @route       /user/block-user/:id
-exports.BlockUser = async (req, res) => {
+export const BlockUser = async (req, res) => {
   const { id } = req.params;
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -148,7 +144,7 @@ exports.BlockUser = async (req, res) => {
   }
 };
 
-exports.GoogleSignIn = async (req, res) => {
+export const GoogleSignIn = async (req, res) => {
   const { email, name, token, googleId } = req.body;
   try {
     const oldUser = await User.findOne({ email });

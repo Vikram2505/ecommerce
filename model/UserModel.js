@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
-const Role  = require("../_helpers/role");
+import mongoose from "mongoose";
+// const { Schema } = mongoose;
+import { Role } from "../_helpers/role.js";
 
-const userSchema = new Schema(
+const userSchema = mongoose.Schema(
   {
     id: { type: String },
     name: { type: String },
@@ -39,4 +39,4 @@ const userSchema = new Schema(
 //   transform: (ret) => delete ret._id,
 // });
 
-exports.UserModel = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);
