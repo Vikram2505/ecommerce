@@ -1,0 +1,42 @@
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+const Role  = require("../_helpers/role");
+
+const userSchema = new Schema(
+  {
+    id: { type: String },
+    name: { type: String },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match:
+        /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/,
+    },
+    password: { type: String, required: true },
+    role: {
+      type: [String],
+      enum: Object.keys(Role),
+      default: Role.User,
+    },
+    //   addresses: { type: [Schema.Types.Mixed] },
+    //   orders: { type: [Schema.Types.Mixed] },
+    userBlocked: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
+
+// const virtual = userSchema.virtual("id");
+// virtual.get(() => {
+//   return this._id;
+// });
+// userSchema.set("toJSON", {
+//   virtuals: true,
+//   versionKey: false,
+//   transform: (ret) => delete ret._id,
+// });
+
+exports.UserModel = mongoose.model("User", userSchema);
