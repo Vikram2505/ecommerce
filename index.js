@@ -2,12 +2,14 @@ import express from "express";
 import connectDB from "./config/db.js";
 import productRouter from "./routes/products.js";
 import userRouter from "./routes/user.js";
+import userChatRouter from "./routes/userChat.js";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import UserSocket from "./config/UserSocket.js";
+import UserChatSocket from "./config/UserChatSocket.js";
+import jwt from "jsonwebtoken";
 
 const app = express();
 
@@ -23,10 +25,27 @@ const io = new Server(httpServer, {
   },
 });
 
+const onConnection = (socket) => {
+  UserChatSocket(socket, io);
+};
 
-io.on("connection", (socket) => {
-  UserSocket(socket,io);
+io.use((socket, next) => {
+  if (socket.handshake.auth.token) {
+    const { token } = socket.handshake.auth;
+    jwt.verify(token, "test", function (err, decoded) {
+      if (err) return next(new Error("Authentication error"));
+      socket.decoded = decoded;
+      next();
+    });
+  } else {
+    next(new Error("Authentication error"));
+  }
 });
+
+io.on("connection", onConnection);
+
+// io.on("connection", (socket) => {
+// });
 
 // body parser is use to get form value
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -41,6 +60,7 @@ connectDB();
 
 app.use("/products", productRouter);
 app.use("/user", userRouter);
+app.use("/chat", userChatRouter);
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT} ✅✅✅`);

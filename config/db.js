@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const connectDB = async () => {
   try {
     // if (process.env.NODE_ENV === "development") {
-    mongoose.set("strictQuery", false);
+    // mongoose.set("strictQuery", false);
     // const conn = await mongoose.connect(
     //   "mongodb://localhost:27017/ecommerce"
     // );

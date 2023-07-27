@@ -1,32 +1,29 @@
 import mongoose from "mongoose";
-import User from "../model/UserModel.js";
+import UserChatModel from "../model/UserChatModel.js";
 import { ErrorHandler } from "../_helpers/errorHandler.js";
 
-export const UserChat = async (req, res) => {
-  const { name, email, password } = req.body;
+export const StoreChat = async (data) => {
+  const { room, author, message } = data;
+  if (message) {
+    await UserChatModel({
+      name: author,
+      message: message,
+      userId: room,
+    }).save();
+  }
+};
 
+export const GetUserChats = async (req, res) => {
+  const { chatId } = req.query;
   try {
-    let OldUser = await User.find({ email });
-    if (OldUser.length > 0) {
-      res.status(400).json({
-        status: "Users email already exists.",
-      });
-    } else {
-      const hashPassword = await bcrypt.hash(password, 12);
-      await User.create({
-        name,
-        email,
-        password: hashPassword,
-      });
-      res.status(201).json({
-        // user,
-        status: "successs",
-        message: "User created",
-      });
-    }
+    const singleChat = await UserChatModel.find({ userId: chatId });
+    res.status(200).json({
+      count: singleChat.length,
+      chats: singleChat,
+      success: true,
+    });
   } catch (err) {
-    // console.log(err);
-    res.status(500).json({
+    res.status(err.statusCode).json({
       status: "failed",
       message: err.message,
     });

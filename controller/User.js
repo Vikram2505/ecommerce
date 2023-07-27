@@ -25,7 +25,6 @@ export const SignUp = async (req, res) => {
         password: hashPassword,
       });
       res.status(201).json({
-        // user,
         status: "successs",
         message: "User created",
       });
@@ -42,8 +41,6 @@ export const SignUp = async (req, res) => {
 // @desc        login user
 // @route       /user/signin
 export const SignIn = async (req, res, next) => {
-  console.log(req.body,'------');
-
   const { email, password } = req.body;
   try {
     const OldUser = await User.findOne({ email });
