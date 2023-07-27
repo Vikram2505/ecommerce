@@ -22,14 +22,4 @@ const UserChatModel = mongoose.Schema(
   { timestamps: true }
 );
 
-// const virtual = userSchema.virtual("id");
-// virtual.get(() => {
-//   return this._id;
-// });
-// userSchema.set("toJSON", {
-//   virtuals: true,
-//   versionKey: false,
-//   transform: (ret) => delete ret._id,
-// });
-
 export default mongoose.model("User", UserChatModel);
