@@ -1,4 +1,6 @@
-const UserChat = (socket, io) => {
+import { StoreChat } from "../controller/UserChat.js";
+
+const UserChatSocket = (socket, io) => {
     
     let users = 0;
     let roomNo = 1;
@@ -17,15 +19,17 @@ const UserChat = (socket, io) => {
       .in("Room -" + roomNo)
       .emit("connectionRoom", "you are connected to room no " + roomNo);
   
+    // Event fire when user join chat room
     socket.on("join_room", (data) => {
       socket.join(data);
       socket.emit("user_join", `User with ID: ${socket.id} joined room: ${data}`);
     });
-  
+     
     // custom event received form user side
-    socket.on("send_message", (data) => {
+    socket.on("send_message", async(data) => {
+      StoreChat(data)
       socket.to(data.room).emit("receive_message", data);
-    });
+    });  
   
     socket.on("disconnect", () => {
       console.log("User Disconnected", socket.id);
@@ -36,5 +40,5 @@ const UserChat = (socket, io) => {
     });
   };
   
-  export default UserChat;
+  export default UserChatSocket;
   

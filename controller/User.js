@@ -25,7 +25,6 @@ export const SignUp = async (req, res) => {
         password: hashPassword,
       });
       res.status(201).json({
-        // user,
         status: "successs",
         message: "User created",
       });

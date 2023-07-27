@@ -4,7 +4,7 @@ import { Role } from "../_helpers/role.js";
 
 const UserChatModel = mongoose.Schema(
   {
-    id: { type: String },
+    userId: { type: String },
     name: { type: String },
     role: {
       type: [String],
@@ -15,7 +15,7 @@ const UserChatModel = mongoose.Schema(
       type: String,
     },
     message: {
-      type: [String],
+      type: String,
       default: false,
     },
   },
@@ -32,4 +32,4 @@ const UserChatModel = mongoose.Schema(
 //   transform: (ret) => delete ret._id,
 // });
 
-export default mongoose.model("User", UserChatModel);
+export default mongoose.model("User_Messages", UserChatModel);

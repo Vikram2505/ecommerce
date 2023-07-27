@@ -2,12 +2,13 @@ import express from "express";
 import connectDB from "./config/db.js";
 import productRouter from "./routes/products.js";
 import userRouter from "./routes/user.js";
+import userChatRouter from "./routes/userChat.js";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import UserSocket from "./config/UserSocket.js";
+import UserChatSocket from "./config/UserChatSocket.js";
 
 const app = express();
 
@@ -25,7 +26,7 @@ const io = new Server(httpServer, {
 
 
 io.on("connection", (socket) => {
-  UserSocket(socket,io);
+  UserChatSocket(socket,io);
 });
 
 // body parser is use to get form value
@@ -41,6 +42,7 @@ connectDB();
 
 app.use("/products", productRouter);
 app.use("/user", userRouter);
+app.use("/chat",userChatRouter)
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT} ✅✅✅`);
